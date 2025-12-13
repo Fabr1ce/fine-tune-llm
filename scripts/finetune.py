@@ -1,5 +1,6 @@
 import argparse
 import json
+import torch
 from datasets import Dataset
 from transformers import (
     AutoTokenizer,
@@ -12,12 +13,26 @@ from peft import LoraConfig, get_peft_model
 
 def load_data(path):
     rows = []
-    with open(path, "r") as f:
-        for line in f:
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read().strip()
+        lines = content.split('\n')
+        
+    for i, line in enumerate(lines):
+        line = line.strip()
+        if not line:
+            continue
+        try:
             obj = json.loads(line)
-            prompt = obj["instruction"]
-            output = obj["output"]
-            rows.append({"text": f"{prompt}\n{output}"})
+            if "instruction" in obj and "output" in obj:
+                prompt = obj["instruction"]
+                output = obj["output"]
+                rows.append({"text": f"{prompt}\n{output}"})
+        except json.JSONDecodeError as e:
+            print(f"Skipping line {i+1}: {e}")
+            print(f"Content: {repr(line)}")
+            continue
+    
+    print(f"Loaded {len(rows)} examples")
     return Dataset.from_list(rows)
 
 
@@ -28,8 +43,8 @@ def main(args):
 
     model = AutoModelForCausalLM.from_pretrained(
         args.model,
-        torch_dtype="auto",
-        device_map="auto"
+        torch_dtype=torch.float16,
+        device_map=None  # Load on CPU first
     )
 
     lora = LoraConfig(
@@ -41,6 +56,9 @@ def main(args):
         task_type="CAUSAL_LM"
     )
     model = get_peft_model(model, lora)
+    
+    # Now move to GPU
+    model = model.to("cuda")
 
     dataset = load_data(args.data)
 

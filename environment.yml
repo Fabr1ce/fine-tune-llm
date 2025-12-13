@@ -5,10 +5,9 @@ channels:
   - defaults
 dependencies:
   - python=3.10
-  - pytorch
-  - pytorch-cuda=none
   - pip
   - pip:
+      - torch --index-url https://download.pytorch.org/whl/rocm5.6
       - transformers
       - datasets
       - peft
