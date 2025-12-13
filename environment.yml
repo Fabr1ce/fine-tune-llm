@@ -1,0 +1,16 @@
+name: llama3-rocm
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch
+  - pytorch-cuda=none
+  - pip
+  - pip:
+      - transformers
+      - datasets
+      - peft
+      - accelerate
+      - sentencepiece
