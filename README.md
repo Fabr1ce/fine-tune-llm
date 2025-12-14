@@ -1,6 +1,6 @@
-# Fine-Tuning Qwen2.5-7B on AMD Developer Cloud
+# Fine-Tuning Llama-Guard-2-8B on AMD Developer Cloud
 
-Complete tutorial for fine-tuning Qwen2.5-7B using LoRA on AMD ROCm GPUs.
+Complete tutorial for fine-tuning Llama-Guard-2-8B using LoRA on AMD ROCm GPUs.
 
 ## 🚀 Quick Start on AMD Developer Cloud
 
@@ -50,6 +50,9 @@ rocm-smi  # Check GPU status
 # Install and login to Hugging Face
 pip install huggingface_hub
 huggingface-cli login
+
+# Request access to Meta-Llama-Guard-2-8B at:
+# https://huggingface.co/meta-llama/Meta-Llama-Guard-2-8B
 ```
 
 ### 5. Prepare Your Data
@@ -62,7 +65,7 @@ Edit `data/sample.jsonl` with your instruction-output pairs:
 ```bash
 # For MI250 (start small)
 python scripts/finetune.py \
-  --model Qwen/Qwen2.5-7B \
+  --model meta-llama/Meta-Llama-Guard-2-8B \
   --data data/sample.jsonl \
   --output_dir results/checkpoints \
   --batch_size 1 \
@@ -70,7 +73,7 @@ python scripts/finetune.py \
 
 # For MI300X (can handle larger batches)
 python scripts/finetune.py \
-  --model Qwen/Qwen2.5-7B \
+  --model meta-llama/Meta-Llama-Guard-2-8B \
   --data data/sample.jsonl \
   --output_dir results/checkpoints \
   --batch_size 4 \
@@ -80,7 +83,7 @@ python scripts/finetune.py \
 ### 6. Test Your Model
 ```bash
 python scripts/infer.py \
-  --model Qwen/Qwen2.5-7B \
+  --model meta-llama/Meta-Llama-Guard-2-8B \
   --lora results/checkpoints \
   --prompt "Your test prompt here"
 ```

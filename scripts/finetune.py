@@ -44,7 +44,7 @@ def main(args):
     model = AutoModelForCausalLM.from_pretrained(
         args.model,
         torch_dtype=torch.float16,
-        device_map=None  # Load on CPU first
+        device_map="auto"
     )
 
     lora = LoraConfig(
@@ -56,9 +56,6 @@ def main(args):
         task_type="CAUSAL_LM"
     )
     model = get_peft_model(model, lora)
-    
-    # Now move to GPU
-    model = model.to("cuda")
 
     dataset = load_data(args.data)
 
@@ -77,11 +74,12 @@ def main(args):
         per_device_train_batch_size=args.batch_size,
         learning_rate=args.lr,
         num_train_epochs=args.epochs,
-        fp16=True,
+        fp16=False,  # Disable fp16 for CPU
         optim="adamw_torch",
         logging_steps=10,
         save_strategy="epoch",
-        report_to="none"
+        report_to="none",
+        no_cuda=True  # Force CPU training
     )
 
     trainer = Trainer(
