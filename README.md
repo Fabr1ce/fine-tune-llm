@@ -33,6 +33,7 @@ Once the terminal is open, run the following:
 git clone https://github.com/Fabr1ce/fine-tune-llm.git
 cd fine-tune-llm
 ```
+At this stage, you can use the terminal or the jupyter notebooks. It the following steps, the terminal is used.
 ```bash
 # Install Python (if 'python' command not found)
 sudo apt update
