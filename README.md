@@ -82,7 +82,7 @@ Edit `data/sample.jsonl` with your/more instruction-output pairs if desired, the
 {"instruction": "Your question here", "output": "Expected response here"}
 ```
 
-### 5. Run Fine-tuning
+### 6. Run Fine-tuning
 ```bash
 # For MI300X (can handle larger batches)
 python scripts/finetune.py \
@@ -101,7 +101,7 @@ python scripts/finetune.py \
   --batch_size 1 \
   --epochs 1
 ```
-### 6. Test Your Model
+### 7. Test Your Model
 ```bash
 python scripts/infer.py \
   --model meta-llama/Meta-Llama-Guard-2-8B \
@@ -109,7 +109,7 @@ python scripts/infer.py \
   --prompt "Your test prompt here"
 ```
 
-### 7. Monitor Training
+### 8. Monitor Training
 ```bash
 # Watch GPU usage
 watch -n 1 rocm-smi
@@ -118,19 +118,19 @@ watch -n 1 rocm-smi
 htop
 ```
 
-### 8. Download Your Fine-tuned Model
+### 9. Download Your Fine-tuned Model
 ```bash
 # Compress the model for download
 tar -czf fine_tuned_model.tar.gz results/checkpoints/
-
+```
+```bash
 # Download via SCP (from your local machine)
 scp -i ~/.ssh/id_ed25519 ubuntu@<instance-ip>:~/fine-tune-llm/fine_tuned_model.tar.gz ./
-
+```
+```bash
 # Alternative: Use rsync for better transfer
 rsync -avz -e "ssh -i ~/.ssh/id_ed25519" ubuntu@<instance-ip>:~/fine-tune-llm/results/checkpoints/ ./local_model/
 ```
-
-
 
 ## 📊 Expected Performance
 
