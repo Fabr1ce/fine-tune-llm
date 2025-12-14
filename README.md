@@ -92,7 +92,7 @@ python scripts/finetune.py \
   --batch_size 4 \
   --epochs 1
 ```
-
+```bash
 # For MI250 (start small)
 python scripts/finetune.py \
   --model meta-llama/Meta-Llama-Guard-2-8B \
@@ -100,7 +100,7 @@ python scripts/finetune.py \
   --output_dir results/checkpoints \
   --batch_size 1 \
   --epochs 1
-
+```
 ### 6. Test Your Model
 ```bash
 python scripts/infer.py \
@@ -117,6 +117,20 @@ watch -n 1 rocm-smi
 # Check system resources
 htop
 ```
+
+### 8. Download Your Fine-tuned Model
+```bash
+# Compress the model for download
+tar -czf fine_tuned_model.tar.gz results/checkpoints/
+
+# Download via SCP (from your local machine)
+scp -i ~/.ssh/id_ed25519 ubuntu@<instance-ip>:~/fine-tune-llm/fine_tuned_model.tar.gz ./
+
+# Alternative: Use rsync for better transfer
+rsync -avz -e "ssh -i ~/.ssh/id_ed25519" ubuntu@<instance-ip>:~/fine-tune-llm/results/checkpoints/ ./local_model/
+```
+
+
 
 ## 📊 Expected Performance
 
