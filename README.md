@@ -3,26 +3,47 @@
 Complete tutorial for fine-tuning Llama-Guard-2-8B using LoRA on AMD ROCm GPUs.
 
 ## 🚀 Quick Start on AMD Developer Cloud
-
-### 1. Get AMD Developer Cloud Access
+### Pre-requisites
 - Sign up at [developer.amd.com](https://developer.amd.com)
-- Request MI250/MI300X instance access
-- Launch ROCm-enabled instance
+- [Request free credits](https://anchor.digitalocean.com/amd-cloud-free-credit.html) (about 4 hours are needed) if needed, this allows running an AMD GPU at no cost
+- Request access to Meta-Llama-Guard-2-8B at: https://huggingface.co/meta-llama/Meta-Llama-Guard-2-8B. This may take a day to receive access
+### 1. Create GPU Droplet
+  1. Once logged into the AMD Developer Cloud account
+  2. Go to Create at the top of the page
+  3. Choose GPU Droplet, the MI300X x8
+  4. For image, choose ROCm Software in the Quick Start tap
+  5. In the Quick Start Package, choose PyTorch
+  6. Click on `Add SSH Key` and run below script in the local terminal to create ssh key to add. This is important in case you need to ssh into the instance from your local.
 
+     1. Setup SSH Key (Local Machine)
+```bash
+    ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
+    pbcopy < ~/.ssh/id_ed25519.pub
+    echo "SSH public key copied to clipboard - paste it in AMD Developer Cloud"
+```
+The key will be copied to the clipboard. Paste it into the ssh key field in the GPU creation windon and click `Add SSH key`.
+     
+  8. Click on `Create GPU Droplet` to create the instance
+  9. Once the instance is created, click on the `Console` button to launch the GPU Droplet terminal. This terminal will be used for fine-tuning in the next steps.
+     
 ### 2. Setup Environment
+Once the terminal is open, run the following:
 ```bash
 # Upload this repo to your instance or clone it
-git clone <your-repo-url>
+git clone https://github.com/Fabr1ce/fine-tune-llm.git
 cd fine-tune-llm
-
+```
+```bash
 # Install Python (if 'python' command not found)
 sudo apt update
 sudo apt install python-is-python3
-
+```
+```bash
 # Install conda (if not available)
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
-
+```
+```bash
 # Create environment
 conda env create -f environment.yml
 conda activate llama3-rocm
@@ -51,26 +72,18 @@ rocm-smi  # Check GPU status
 pip install huggingface_hub
 huggingface-cli login
 
-# Request access to Meta-Llama-Guard-2-8B at:
+# Request access to Meta-Llama-Guard-2-8B, if not already done in the pre-requisites, at:
 # https://huggingface.co/meta-llama/Meta-Llama-Guard-2-8B
 ```
 
 ### 5. Prepare Your Data
-Edit `data/sample.jsonl` with your instruction-output pairs:
+Edit `data/sample.jsonl` with your/more instruction-output pairs if desired, there are already 3 examples:
 ```json
 {"instruction": "Your question here", "output": "Expected response here"}
 ```
 
 ### 5. Run Fine-tuning
 ```bash
-# For MI250 (start small)
-python scripts/finetune.py \
-  --model meta-llama/Meta-Llama-Guard-2-8B \
-  --data data/sample.jsonl \
-  --output_dir results/checkpoints \
-  --batch_size 1 \
-  --epochs 1
-
 # For MI300X (can handle larger batches)
 python scripts/finetune.py \
   --model meta-llama/Meta-Llama-Guard-2-8B \
@@ -79,6 +92,14 @@ python scripts/finetune.py \
   --batch_size 4 \
   --epochs 1
 ```
+
+# For MI250 (start small)
+python scripts/finetune.py \
+  --model meta-llama/Meta-Llama-Guard-2-8B \
+  --data data/sample.jsonl \
+  --output_dir results/checkpoints \
+  --batch_size 1 \
+  --epochs 1
 
 ### 6. Test Your Model
 ```bash
